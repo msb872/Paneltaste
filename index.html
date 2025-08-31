@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>فرم ارزیابی تست پنل</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/jalaali-js/dist/jalaali.min.js"></script>
   <style>
     body {
@@ -14,25 +15,8 @@
       text-align: right;
       color: #333;
     }
-    .toolbar {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 1rem;
-    }
-    .toolbar button {
-      padding: .6rem 1.2rem;
-      border: none;
-      border-radius: 4px;
-      background: #1976d2;
-      color: #fff;
-      cursor: pointer;
-    }
-    .toolbar button:hover {
-      background: #0f5caa;
-    }
-    h2, h3 {
-      margin-top: 1.5em;
-    }
+
+    /* فرم اصلی */
     form {
       border: 1px solid #ccc;
       padding: 1rem;
@@ -45,34 +29,31 @@
       margin-bottom: 1rem;
       border-radius: 4px;
     }
-    legend {
-      font-weight: bold;
-    }
-    label {
-      font-size: 1rem;
-      margin-left: .5rem;
-      cursor: pointer;
-    }
+    legend { font-weight: bold; }
+    label { margin-left: .5rem; cursor: pointer; }
+
     .product-code-options {
       display: flex;
-      gap: 1.5rem;
+      gap: 1rem;
       align-items: center;
+      flex-wrap: wrap;
       margin-top: 1rem;
     }
-    .product-code-options label {
-      display: flex;
-      align-items: center;
+    .product-code-options input[type="text"] {
+      width: 120px;
+      padding: .4rem;
+      border: 1px solid #bbb;
+      border-radius: 4px;
     }
-    .product-code-options input {
-      margin-left: .4rem;
-    }
+
     .param-row {
       display: flex;
       gap: 1rem;
+      flex-wrap: wrap;
       margin-bottom: 1rem;
     }
     .param-box {
-      flex: 1;
+      flex: 1 1 200px;
       border: 1px solid #ddd;
       padding: .8rem;
       border-radius: 4px;
@@ -81,19 +62,10 @@
     .param-box .options {
       display: flex;
       flex-wrap: wrap;
-      justify-content: space-around;
+      gap: .8rem;
       margin-top: .5rem;
     }
-    .param-box .options label {
-      font-size: .95rem;
-      display: flex;
-      align-items: center;
-      margin-bottom: .3rem;
-    }
-    .param-box .options input {
-      margin-left: .3rem;
-      cursor: pointer;
-    }
+
     .buttons, .export-btns {
       margin-top: 1rem;
     }
@@ -106,21 +78,12 @@
       color: #fff;
       cursor: pointer;
     }
-    .buttons button {
-      background: #1976d2;
-    }
-    .buttons button:hover {
-      background: #0f5caa;
-    }
-    .export-btns button.csv {
-      background: #388e3c;
-    }
-    .export-btns button.excel {
-      background: #1e88e5;
-    }
-    .export-btns button.delete {
-      background: #d32f2f;
-    }
+    .buttons button { background: #1976d2; }
+    .buttons button:hover { background: #0f5caa; }
+    .export-btns button.csv    { background: #388e3c; }
+    .export-btns button.excel  { background: #1e88e5; }
+    .export-btns button.delete { background: #d32f2f; }
+
     #tableProductName {
       font-weight: bold;
       margin-top: 1rem;
@@ -144,9 +107,9 @@
       color: #fff;
       cursor: pointer;
     }
-    .action-btn.delete {
-      background: #d32f2f;
-    }
+    .action-btn.delete { background: #d32f2f; }
+
+    /* نمودارها */
     .charts-row {
       display: flex;
       flex-wrap: wrap;
@@ -163,50 +126,54 @@
       margin-top: .3rem;
       font-size: .95rem;
     }
+
+    /* دکمه‌های شناور راهنما/درباره */
+    .float-buttons {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: .5rem;
+      z-index: 1000;
+    }
+    .float-buttons button {
+      padding: .6rem 1rem;
+      border: none;
+      border-radius: 4px;
+      background: #1976d2;
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,.2);
+    }
+    .float-buttons button:hover {
+      background: #0f5caa;
+    }
+
+    /* چاپ: فقط نمودارها دو ستونه */
     @media print {
-      form, .buttons, .export-btns, .toolbar, footer { display: none !important; }
-      h3, #tableProductName, .charts-row, .chart-container, .chart-label, canvas {
+      form, .buttons, .export-btns, .float-buttons { display: none !important; }
+      /* جدول و تحلیل تک ستونه */
+      #tableProductName, h3, #analysis, table { page-break-inside: avoid; }
+      /* نمودارها دو ستونه */
+      .charts-row {
+        display: block;
+        column-count: 2;
+        column-gap: 1rem;
+      }
+      .chart-container {
+        break-inside: avoid-column;
+        page-break-inside: avoid;
+        margin-bottom: 1rem;
+      }
+      .chart-label, canvas {
         display: block !important;
         page-break-inside: avoid;
       }
     }
-    footer {
-      margin-top: 2rem;
-      border-top: 1px solid #ccc;
-      padding-top: 1rem;
-    }
-    footer h3 {
-      margin-bottom: .5rem;
-    }
-    footer p, footer textarea {
-      margin-bottom: .8rem;
-    }
-    footer textarea {
-      width: 100%;
-      padding: .5rem;
-      border: 1px solid #bbb;
-      border-radius: 4px;
-      resize: vertical;
-    }
-    footer button {
-      background: #1976d2;
-      color: #fff;
-      padding: .6rem 1.2rem;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    footer button:hover {
-      background: #0f5caa;
-    }
   </style>
 </head>
 <body>
-
-  <div class="toolbar">
-    <button type="button" id="helpBtn">راهنما</button>
-    <button type="button" id="contactBtn">اطلاعات نویسنده</button>
-  </div>
 
   <h2 id="jalali-date" aria-label="تاریخ شمسی"></h2>
 
@@ -215,27 +182,33 @@
       <legend>مشخصات فردی</legend>
       <div>
         <span>تحصیلات:</span>
-        <label><input type="radio" name="education" value="دیپلم" required>دیپلم</label>
-        <label><input type="radio" name="education" value="کاردانی">کاردانی</label>
-        <label><input type="radio" name="education" value="کارشناسی">کارشناسی</label>
-        <label><input type="radio" name="education" value="ارشد">ارشد</label>
-        <label><input type="radio" name="education" value="دکترا">دکترا</label>
+        <label><input name="education" type="radio" value="دیپلم" required>دیپلم</label>
+        <label><input name="education" type="radio" value="کاردانی">کاردانی</label>
+        <label><input name="education" type="radio" value="کارشناسی">کارشناسی</label>
+        <label><input name="education" type="radio" value="ارشد">ارشد</label>
+        <label><input name="education" type="radio" value="دکترا">دکترا</label>
       </div>
       <div style="margin-top:1rem;">
         <span>جنسیت:</span>
-        <label><input type="radio" name="gender" value="آقا" required>آقا</label>
-        <label><input type="radio" name="gender" value="خانم">خانم</label>
+        <label><input name="gender" type="radio" value="آقا" required>آقا</label>
+        <label><input name="gender" type="radio" value="خانم">خانم</label>
       </div>
       <div class="product-code-options">
         <span>کد محصول:</span>
-        <label><input type="radio" name="productCode" value="A" required>A</label>
-        <label><input type="radio" name="productCode" value="B">B</label>
-        <label><input type="radio" name="productCode" value="C">C</label>
-        <label><input type="radio" name="productCode" value="D">D</label>
+        <label><input name="productCode" type="radio" value="A" required>A</label>
+        <label><input name="productCode" type="radio" value="B">B</label>
+        <label><input name="productCode" type="radio" value="C">C</label>
+        <label><input name="productCode" type="radio" value="D">D</label>
+        <label><input name="productCode" type="radio" value="E">E</label>
+        <label><input name="productCode" type="radio" value="F">F</label>
+        <label><input name="productCode" type="radio" value="G">G</label>
+        <label><input name="productCode" type="radio" value="manual">سایر</label>
+        <input id="manualProductCode" name="manualProductCode"
+               type="text" placeholder="وارد کردن کد محصول" disabled>
       </div>
       <div style="margin-top:1rem;">
         <label for="productName">نام محصول:</label>
-        <input type="text" id="productName" name="productName"
+        <input id="productName" name="productName" type="text"
                placeholder="نام محصول را وارد کنید" required>
       </div>
     </fieldset>
@@ -246,19 +219,21 @@
         <div class="param-box">
           <label>رنگ:</label>
           <div class="options">
-            <label><input type="radio" name="color" value="4" required>خیلی خوب</label>
-            <label><input type="radio" name="color" value="3">خوب</label>
-            <label><input type="radio" name="color" value="2">متوسط</label>
-            <label><input type="radio" name="color" value="1">ضعیف</label>
+            <label><input name="color" type="radio" value="5" required>خیلی خوب</label>
+            <label><input name="color" type="radio" value="4">خوب</label>
+            <label><input name="color" type="radio" value="3">متوسط</label>
+            <label><input name="color" type="radio" value="2">ضعیف</label>
+            <label><input name="color" type="radio" value="1">خیلی ضعیف</label>
           </div>
         </div>
         <div class="param-box">
           <label>طعم و مزه:</label>
           <div class="options">
-            <label><input type="radio" name="taste" value="4" required>خیلی خوب</label>
-            <label><input type="radio" name="taste" value="3">خوب</label>
-            <label><input type="radio" name="taste" value="2">متوسط</label>
-            <label><input type="radio" name="taste" value="1">ضعیف</label>
+            <label><input name="taste" type="radio" value="5" required>خیلی خوب</label>
+            <label><input name="taste" type="radio" value="4">خوب</label>
+            <label><input name="taste" type="radio" value="3">متوسط</label>
+            <label><input name="taste" type="radio" value="2">ضعیف</label>
+            <label><input name="taste" type="radio" value="1">خیلی ضعیف</label>
           </div>
         </div>
       </div>
@@ -266,45 +241,39 @@
         <div class="param-box">
           <label>عطر و بو:</label>
           <div class="options">
-            <label><input type="radio" name="smell" value="4" required>خیلی خوب</label>
-            <label><input type="radio" name="smell" value="3">خوب</label>
-            <label><input type="radio" name="smell" value="2">متوسط</label>
-            <label><input type="radio" name="smell" value="1">ضعیف</label>
+            <label><input name="smell" type="radio" value="5" required>خیلی خوب</label>
+            <label><input name="smell" type="radio" value="4">خوب</label>
+            <label><input name="smell" type="radio" value="3">متوسط</label>
+            <label><input name="smell" type="radio" value="2">ضعیف</label>
+            <label><input name="smell" type="radio" value="1">خیلی ضعیف</label>
           </div>
         </div>
         <div class="param-box">
-          <label>طعم غالب:</label>
+          <label>بافت:</label>
           <div class="options">
-            <label><input type="radio" name="dominantTaste" value="کمی تند" required>کمی تند</label>
-            <label><input type="radio" name="dominantTaste" value="تند">تند</label>
-            <label><input type="radio" name="dominantTaste" value="کمی شور">کمی شور</label>
-            <label><input type="radio" name="dominantTaste" value="شور">شور</label>
+            <label><input name="texture" type="radio" value="5" required>خیلی خوب</label>
+            <label><input name="texture" type="radio" value="4">خوب</label>
+            <label><input name="texture" type="radio" value="3">متوسط</label>
+            <label><input name="texture" type="radio" value="2">ضعیف</label>
+            <label><input name="texture" type="radio" value="1">خیلی ضعیف</label>
           </div>
         </div>
       </div>
       <div class="param-row">
         <div class="param-box">
-          <label>بافت:</label>
-          <div class="options">
-            <label><input type="radio" name="texture" value="4" required>خیلی خوب</label>
-            <label><input type="radio" name="texture" value="3">خوب</label>
-            <label><input type="radio" name="texture" value="2">متوسط</label>
-            <label><input type="radio" name="texture" value="1">ضعیف</label>
-          </div>
-        </div>
-        <div class="param-box">
           <label>احساس دهانی:</label>
           <div class="options">
-            <label><input type="radio" name="mouthfeel" value="4" required>خیلی خوب</label>
-            <label><input type="radio" name="mouthfeel" value="3">خوب</label>
-            <label><input type="radio" name="mouthfeel" value="2">متوسط</label>
-            <label><input type="radio" name="mouthfeel" value="1">ضعیف</label>
+            <label><input name="mouthfeel" type="radio" value="5" required>خیلی خوب</label>
+            <label><input name="mouthfeel" type="radio" value="4">خوب</label>
+            <label><input name="mouthfeel" type="radio" value="3">متوسط</label>
+            <label><input name="mouthfeel" type="radio" value="2">ضعیف</label>
+            <label><input name="mouthfeel" type="radio" value="1">خیلی ضعیف</label>
           </div>
         </div>
       </div>
       <div class="buttons">
         <button type="submit">ثبت</button>
-        <button type="button" id="resetBtn">ریست کامل</button>
+        <button id="resetBtn" type="button">ریست کامل</button>
         <button type="button" onclick="window.print()">چاپ</button>
       </div>
     </fieldset>
@@ -316,16 +285,9 @@
   <table id="data-table">
     <thead>
       <tr>
-        <th>کد محصول</th>
-        <th>تحصیلات</th>
-        <th>جنسیت</th>
-        <th>رنگ</th>
-        <th>طعم و مزه</th>
-        <th>عطر و بو</th>
-        <th>طعم غالب</th>
-        <th>بافت</th>
-        <th>احساس دهانی</th>
-        <th>عملیات</th>
+        <th>کد محصول</th><th>نام محصول</th><th>تحصیلات</th>
+        <th>جنسیت</th><th>رنگ</th><th>طعم و مزه</th>
+        <th>عطر و بو</th><th>بافت</th><th>احساس دهانی</th><th>عملیات</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -355,10 +317,6 @@
       <p class="chart-label">میانگین عطر و بو</p>
     </div>
     <div class="chart-container">
-      <canvas id="dominantChart"></canvas>
-      <p class="chart-label">تعداد انتخاب‌های طعم غالب</p>
-    </div>
-    <div class="chart-container">
       <canvas id="textureChart"></canvas>
       <p class="chart-label">میانگین بافت</p>
     </div>
@@ -368,71 +326,89 @@
     </div>
   </div>
 
-  <footer>
-    <h3>مشخصات نویسنده</h3>
-    <p>نویسنده: Mosayeb</p>
-    <p>ایمیل: mosayeb872@gmail.com</p>
-    <p>تلفن: +989173206052</p>
-
-    <h3>پیشنهاد و نظرات</h3>
-    <textarea id="feedback" rows="4" placeholder="نظر یا پیشنهاد خود را بنویسید"></textarea>
-    <button type="button" id="sendFeedback">ارسال نظر</button>
-  </footer>
+  <!-- دکمه‌های خوانا و شناور -->
+  <div class="float-buttons">
+    <button id="helpBtn" type="button">📋 راهنما</button>
+    <button id="contactBtn" type="button">ℹ️ درباره نویسنده</button>
+  </div>
 
   <script>
+    Chart.register(ChartDataLabels);
+
     let evaluations = JSON.parse(localStorage.getItem('evaluations') || '[]');
     let editingIndex = -1;
 
     document.addEventListener('DOMContentLoaded', () => {
       setJalaliDate();
+      bindManualToggle();
       loadTable();
       updateAnalysisAndCharts();
 
-      document.getElementById('resetBtn')
-              .addEventListener('click', () => {
+      document.getElementById('resetBtn').addEventListener('click', () => {
+        resetForm(); window.scrollTo(0,0);
+      });
+
+      document.getElementById('helpBtn').addEventListener('click', () => {
+        alert(`راهنمای فرم ارزیابی:
+1. مشخصات فردی: تحصیلات، جنسیت، کد محصول (A–G یا سایر) و نام محصول.
+2. ارزیابی: رنگ، طعم، عطر، بافت و احساس دهانی (هرکدام 1–5).
+3. ثبت: ذخیره و به‌روزرسانی.
+4. ریست: پاک کردن فرم.
+5. چاپ: نسخه چاپی با نمودارها دو ستونه.`);
+      });
+
+      document.getElementById('contactBtn').addEventListener('click', () => {
+        alert(`درباره نویسنده:
+نام: Mosayeb  
+تخصص: توسعه وب و تحلیل داده  
+ایمیل: mosayeb872@gmail.com  
+📬 ایده‌های شما، سوخت نسخه‌های بعدی هستند!`);
+      });
+
+      document.getElementById('evaluation-form').addEventListener('submit', e => {
+        e.preventDefault();
+        const f = e.target;
+        const code = f.productCode.value === 'manual'
+                     ? f.manualProductCode.value.trim()
+                     : f.productCode.value;
+        const data = {
+          productCode: code,
+          productName: f.productName.value,
+          education: f.education.value,
+          gender: f.gender.value,
+          color: +f.color.value,
+          taste: +f.taste.value,
+          smell: +f.smell.value,
+          texture: +f.texture.value,
+          mouthfeel: +f.mouthfeel.value
+        };
+        if (editingIndex > -1) evaluations[editingIndex] = data;
+        else evaluations.push(data);
+
+        localStorage.setItem('evaluations', JSON.stringify(evaluations));
+        localStorage.setItem('currentProductName', data.productName);
         resetForm();
-        window.scrollTo(0,0);
-      });
-
-      document.getElementById('helpBtn')
-              .addEventListener('click', () => {
-        alert(
-`راهنما:
-1. در بخش مشخصات فردی، تحصیلات، جنسیت و کد محصول را انتخاب کنید و نام محصول را وارد نمایید.
-2. در بخش ارزیابی پارامترها، برای رنگ، طعم و مزه، عطر و بو، طعم غالب، بافت و احساس دهانی گزینه مناسب را انتخاب کنید.
-3. روی "ثبت" کلیک کنید تا داده‌ها به جدول اضافه شود.
-4. برای ویرایش ردیف، روی "ویرایش" کلیک و سپس "ثبت" را مجدداً بزنید.
-5. برای حذف ردیف، از دکمه "حذف" استفاده کنید.
-6. با "پاک کردن همه" تمام داده‌ها حذف می‌شوند.
-7. خروجی CSV/Excel قابل دریافت است.
-8. برای چاپ، دکمه "چاپ" را بزنید.
-9. دیدگاه و پیشنهادتان را در بخش انتهایی وارد و ارسال کنید.`
-        );
-      });
-
-      document.getElementById('contactBtn')
-              .addEventListener('click', () => {
-        alert(
-`اطلاعات نویسنده:
-Mosayeb
-ایمیل: mosayeb872@gmail.com
-تلفن: +989173206052`
-        );
-      });
-
-      document.getElementById('sendFeedback')
-              .addEventListener('click', () => {
-        const msg = document.getElementById('feedback').value.trim();
-        if (!msg) {
-          alert('لطفا پیشنهاد یا نظر خود را وارد کنید.');
-          return;
-        }
-        window.location.href =
-          'mailto:mosayeb872@gmail.com'
-          + '?subject=' + encodeURIComponent('پیشنهاد و نظرات')
-          + '&body=' + encodeURIComponent(msg);
+        loadTable();
+        updateAnalysisAndCharts();
       });
     });
+
+    function bindManualToggle() {
+      document.querySelectorAll('input[name="productCode"]').forEach(radio => {
+        radio.addEventListener('change', e => {
+          const manual = document.getElementById('manualProductCode');
+          if (e.target.value === 'manual') {
+            manual.disabled = false;
+            manual.required = true;
+            manual.focus();
+          } else {
+            manual.disabled = true;
+            manual.required = false;
+            manual.value = '';
+          }
+        });
+      });
+    }
 
     function setJalaliDate() {
       const j = jalaali.toJalaali(new Date());
@@ -440,55 +416,32 @@ Mosayeb
         `تاریخ: ${j.jy}/${String(j.jm).padStart(2,'0')}/${String(j.jd).padStart(2,'0')}`;
     }
 
-    document.getElementById('evaluation-form')
-            .addEventListener('submit', e => {
-      e.preventDefault();
-      const f = e.target;
-      const data = {
-        productCode: f.productCode.value,
-        productName: f.productName.value,
-        education: f.education.value,
-        gender: f.gender.value,
-        color: +f.color.value,
-        taste: +f.taste.value,
-        smell: +f.smell.value,
-        dominantTaste: f.dominantTaste.value,
-        texture: +f.texture.value,
-        mouthfeel: +f.mouthfeel.value
-      };
-      if (editingIndex > -1) {
-        evaluations[editingIndex] = data;
-      } else {
-        evaluations.push(data);
-      }
-      localStorage.setItem('evaluations', JSON.stringify(evaluations));
-      localStorage.setItem('currentProductName', data.productName);
-      resetForm();
-      loadTable();
-      updateAnalysisAndCharts();
-    });
-
     function resetForm() {
       document.getElementById('evaluation-form').reset();
       editingIndex = -1;
+      const manual = document.getElementById('manualProductCode');
+      manual.disabled = true;
+      manual.required = false;
+      manual.value = '';
     }
 
     function loadTable() {
       const nameDiv = document.getElementById('tableProductName');
-      const prodName = localStorage.getItem('currentProductName') || '';
-      nameDiv.innerText = prodName ? `نام محصول: ${prodName}` : '';
+      const prod = localStorage.getItem('currentProductName') || '';
+      nameDiv.innerText = prod ? `نام محصول: ${prod}` : '';
+
       const tbody = document.querySelector('#data-table tbody');
       tbody.innerHTML = '';
-      evaluations.forEach((d, i) => {
+      evaluations.forEach((d,i) => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${d.productCode}</td>
+          <td>${d.productName}</td>
           <td>${d.education}</td>
           <td>${d.gender}</td>
           <td>${d.color}</td>
           <td>${d.taste}</td>
           <td>${d.smell}</td>
-          <td>${d.dominantTaste}</td>
           <td>${d.texture}</td>
           <td>${d.mouthfeel}</td>
           <td>
@@ -502,16 +455,26 @@ Mosayeb
     function editRow(i) {
       const d = evaluations[i];
       const f = document.getElementById('evaluation-form');
-      f.productCode.value   = d.productCode;
-      f.productName.value   = d.productName;
-      f.education.value     = d.education;
-      f.gender.value        = d.gender;
-      f.color.value         = d.color;
-      f.taste.value         = d.taste;
-      f.smell.value         = d.smell;
-      f.dominantTaste.value = d.dominantTaste;
-      f.texture.value       = d.texture;
-      f.mouthfeel.value     = d.mouthfeel;
+      const manual = document.getElementById('manualProductCode');
+      if (!['A','B','C','D','E','F','G'].includes(d.productCode)) {
+        f.productCode.value = 'manual';
+        manual.disabled = false;
+        manual.required = true;
+        manual.value = d.productCode;
+      } else {
+        f.productCode.value = d.productCode;
+        manual.disabled = true;
+        manual.required = false;
+        manual.value = '';
+      }
+      f.productName.value = d.productName;
+      f.education.value   = d.education;
+      f.gender.value      = d.gender;
+      f.color.value       = d.color;
+      f.taste.value       = d.taste;
+      f.smell.value       = d.smell;
+      f.texture.value     = d.texture;
+      f.mouthfeel.value   = d.mouthfeel;
       editingIndex = i;
       window.scrollTo(0,0);
     }
@@ -532,151 +495,106 @@ Mosayeb
       updateAnalysisAndCharts();
     }
 
-    const domLabels = ['کمی تند','تند','کمی شور','شور'];
     let charts = {};
 
     function updateAnalysisAndCharts() {
+      const analysisDiv = document.getElementById('analysis');
       if (!evaluations.length) {
-        document.getElementById('analysis').innerText = 'داده‌ای موجود نیست.';
-        updateCharts([],[],[],{A:[],B:[],C:[],D:[]},[],[]);
+        analysisDiv.innerText = 'داده‌ای موجود نیست.';
+        Object.values(charts).forEach(c => c.clear());
         return;
       }
-      const groups = {A:[],B:[],C:[],D:[]};
-      evaluations.forEach(d=>groups[d.productCode].push(d));
+      const codes = Array.from(new Set(evaluations.map(d => d.productCode)));
+      const groups = {};
+      codes.forEach(c => groups[c] = []);
+      evaluations.forEach(d => groups[d.productCode].push(d));
+
       const avg = {};
-      ['A','B','C','D'].forEach(code => {
+      codes.forEach(code => {
         const arr = groups[code];
         avg[code] = {
-          color: arr.length?arr.reduce((s,x)=>s+x.color,0)/arr.length:0,
-          taste: arr.length?arr.reduce((s,x)=>s+x.taste,0)/arr.length:0,
-          smell: arr.length?arr.reduce((s,x)=>s+x.smell,0)/arr.length:0,
-          texture: arr.length?arr.reduce((s,x)=>s+x.texture,0)/arr.length:0,
-          mouthfeel: arr.length?arr.reduce((s,x)=>s+x.mouthfeel,0)/arr.length:0
+          color:     arr.reduce((s,x) => s + x.color,0) / arr.length,
+          taste:     arr.reduce((s,x) => s + x.taste,0) / arr.length,
+          smell:     arr.reduce((s,x) => s + x.smell,0) / arr.length,
+          texture:   arr.reduce((s,x) => s + x.texture,0) / arr.length,
+          mouthfeel: arr.reduce((s,x) => s + x.mouthfeel,0) / arr.length
         };
       });
-      const rank = p=>['A','B','C','D'].sort((a,b)=>avg[b][p]-avg[a][p]);
-      const colR=rank('color'), tasR=rank('taste'), smR=rank('smell');
-      const overall=['A','B','C','D'].sort((a,b)=>
-        (avg[b].color+avg[b].taste+avg[b].smell)-
-        (avg[a].color+avg[a].taste+avg[a].smell)
-      )[0];
 
-      document.getElementById('analysis').innerText = `
-از نظر رنگ نمونه ${colR[0]} با میانگین ${avg[colR[0]].color.toFixed(2)} بهترین است.
-از نظر طعم و مزه نمونه ${tasR[0]} با میانگین ${avg[tasR[0]].taste.toFixed(2)} پیشتاز است.
-در عطر و بو نمونه ${smR[0]} با میانگین ${avg[smR[0]].smell.toFixed(2)} برتر است.
-در مجموع نمونه ${overall} بالاترین امتیاز را دارد.
-      `.trim();
+      const rank = prop => [...codes].sort((a,b) => avg[b][prop] - avg[a][prop]);
+      const bestColor     = rank('color')[0];
+      const bestTaste     = rank('taste')[0];
+      const bestSmell     = rank('smell')[0];
+      const bestTexture   = rank('texture')[0];
+      const bestMouthfeel = rank('mouthfeel')[0];
+      const overall = codes.slice().sort((a,b) => {
+        const sumA = avg[a].color + avg[a].taste + avg[a].smell + avg[a].texture + avg[a].mouthfeel;
+        const sumB = avg[b].color + avg[b].taste + avg[b].smell + avg[b].texture + avg[b].mouthfeel;
+        return sumB - sumA;
+      })[0];
 
-      const dataC = ['A','B','C','D'].map(c=>avg[c].color.toFixed(2));
-      const dataT = ['A','B','C','D'].map(c=>avg[c].taste.toFixed(2));
-      const dataS = ['A','B','C','D'].map(c=>avg[c].smell.toFixed(2));
-      const dataX = ['A','B','C','D'].map(c=>avg[c].texture.toFixed(2));
-      const dataM = ['A','B','C','D'].map(c=>avg[c].mouthfeel.toFixed(2));
+      analysisDiv.innerText =
+`• بخش رنگ: ${bestColor} (${avg[bestColor].color.toFixed(2)})  
+• بخش طعم و مزه: ${bestTaste} (${avg[bestTaste].taste.toFixed(2)})  
+• بخش عطر و بو: ${bestSmell} (${avg[bestSmell].smell.toFixed(2)})  
+• بخش بافت: ${bestTexture} (${avg[bestTexture].texture.toFixed(2)})  
+• بخش احساس دهانی: ${bestMouthfeel} (${avg[bestMouthfeel].mouthfeel.toFixed(2)})  
+• کلی: نمونه ${overall} برتر است.`;
 
-      const domCounts = {A:new Array(domLabels.length).fill(0),
-                         B:new Array(domLabels.length).fill(0),
-                         C:new Array(domLabels.length).fill(0),
-                         D:new Array(domLabels.length).fill(0)};
-      evaluations.forEach(d=>{
-        const idx = domLabels.indexOf(d.dominantTaste);
-        if(idx>-1) domCounts[d.productCode][idx]++;
-      });
+      const dataC = codes.map(c => avg[c].color.toFixed(2));
+      const dataT = codes.map(c => avg[c].taste.toFixed(2));
+      const dataS = codes.map(c => avg[c].smell.toFixed(2));
+      const dataX = codes.map(c => avg[c].texture.toFixed(2));
+      const dataM = codes.map(c => avg[c].mouthfeel.toFixed(2));
 
-      updateCharts(dataC,dataT,dataS,domCounts,dataX,dataM);
-    }
+      const palette = [
+        'rgba(255,99,132,0.7)','rgba(54,162,235,0.7)',
+        'rgba(255,206,86,0.7)','rgba(75,192,192,0.7)',
+        'rgba(153,102,255,0.7)','rgba(255,159,64,0.7)',
+        'rgba(99,255,132,0.7)'
+      ];
+      const colors = {};
+      codes.forEach((c,i) => colors[c] = palette[i % palette.length]);
 
-    function updateCharts(cData,tData,sData,dCounts,xData,mData) {
-      const colors = {
-        A:'rgba(255,99,132,0.7)',
-        B:'rgba(54,162,235,0.7)',
-        C:'rgba(255,206,86,0.7)',
-        D:'rgba(75,192,192,0.7)'
-      };
-      const prodLabels = ['A','B','C','D'];
       const makeCfg = (label,data) => ({
-        type:'bar',
-        data:{ labels:prodLabels, datasets:[{
-          label, data, backgroundColor:prodLabels.map(c=>colors[c])
-        }]},
-        options:{
-          indexAxis:'y',
-          responsive:true,
-          maintainAspectRatio:false,
-          scales:{ x:{ min:0, max:4 } }
+        type: 'bar',
+        data: { labels: codes, datasets: [{ label, data, backgroundColor: codes.map(c => colors[c]) }] },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: { x: { min: 0, max: 5 } },
+          plugins: {
+            datalabels: { color: '#000', anchor: 'end', align: 'right', formatter: v => v }
+          }
         }
       });
 
       if (!charts.colorChart) {
-        charts.colorChart = new Chart(
-          document.getElementById('colorChart'),
-          makeCfg('میانگین رنگ', cData)
-        );
-        charts.tasteChart = new Chart(
-          document.getElementById('tasteChart'),
-          makeCfg('میانگین طعم و مزه', tData)
-        );
-        charts.smellChart = new Chart(
-          document.getElementById('smellChart'),
-          makeCfg('میانگین عطر و بو', sData)
-        );
-        charts.textureChart = new Chart(
-          document.getElementById('textureChart'),
-          makeCfg('میانگین بافت', xData)
-        );
-        charts.mouthfeelChart = new Chart(
-          document.getElementById('mouthfeelChart'),
-          makeCfg('میانگین احساس دهانی', mData)
-        );
-        charts.dominantChart = new Chart(
-          document.getElementById('dominantChart'),
-          {
-            type:'bar',
-            data:{
-              labels: domLabels,
-              datasets: prodLabels.map(code => ({
-                label:`نمونه ${code}`,
-                data: dCounts[code],
-                backgroundColor: colors[code]
-              }))
-            },
-            options:{
-              indexAxis:'y',
-              responsive:true,
-              maintainAspectRatio:false,
-              scales:{ x:{ beginAtZero:true } }
-            }
-          }
-        );
+        charts.colorChart     = new Chart(document.getElementById('colorChart'),     makeCfg('میانگین رنگ', dataC));
+        charts.tasteChart     = new Chart(document.getElementById('tasteChart'),     makeCfg('میانگین طعم و مزه', dataT));
+        charts.smellChart     = new Chart(document.getElementById('smellChart'),     makeCfg('میانگین عطر و بو', dataS));
+        charts.textureChart   = new Chart(document.getElementById('textureChart'),   makeCfg('میانگین بافت', dataX));
+        charts.mouthfeelChart = new Chart(document.getElementById('mouthfeelChart'), makeCfg('میانگین احساس دهانی', dataM));
       } else {
-        charts.colorChart.data.datasets[0].data = cData; charts.colorChart.update();
-        charts.tasteChart.data.datasets[0].data = tData; charts.tasteChart.update();
-        charts.smellChart.data.datasets[0].data = sData; charts.smellChart.update();
-        charts.textureChart.data.datasets[0].data = xData; charts.textureChart.update();
-        charts.mouthfeelChart.data.datasets[0].data = mData; charts.mouthfeelChart.update();
-        charts.dominantChart.data.datasets.forEach((ds,i)=>{
-          ds.data = dCounts[['A','B','C','D'][i]];
+        [['colorChart',dataC],['tasteChart',dataT],['smellChart',dataS],
+         ['textureChart',dataX],['mouthfeelChart',dataM]].forEach(([key,dat]) => {
+          charts[key].data.labels = codes;
+          charts[key].data.datasets[0].data = dat;
+          charts[key].data.datasets[0].backgroundColor = codes.map(c => colors[c]);
+          charts[key].update();
         });
-        charts.dominantChart.update();
       }
     }
 
     function exportCSV() {
-      if (!evaluations.length) {
-        alert('داده‌ای برای خروجی وجود ندارد.');
-        return;
-      }
-      const header = [
-        'کد محصول','نام محصول','تحصیلات','جنسیت',
-        'رنگ','طعم و مزه','عطر و بو','طعم غالب','بافت','احساس دهانی'
-      ];
+      if (!evaluations.length) { alert('داده‌ای وجود ندارد.'); return; }
+      const header = ['کد','نام','تحصیلات','جنسیت','رنگ','طعم','عطر','بافت','احساس'];
       const rows = evaluations.map(d => [
         d.productCode,d.productName,d.education,d.gender,
-        d.color,d.taste,d.smell,d.dominantTaste,
-        d.texture,d.mouthfeel
+        d.color,d.taste,d.smell,d.texture,d.mouthfeel
       ]);
-      let csv = '\uFEFF' + header.join(',') + '\n' +
-                rows.map(r => r.join(',')).join('\n');
+      let csv = '\uFEFF' + header.join(',') + '\n' + rows.map(r => r.join(',')).join('\n');
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
@@ -685,21 +603,13 @@ Mosayeb
     }
 
     function exportExcel() {
-      if (!evaluations.length) {
-        alert('داده‌ای برای خروجی وجود ندارد.');
-        return;
-      }
-      const header = [
-        'کد محصول','نام محصول','تحصیلات','جنسیت',
-        'رنگ','طعم و مزه','عطر و بو','طعم غالب','بافت','احساس دهانی'
-      ];
+      if (!evaluations.length) { alert('داده‌ای وجود ندارد.'); return; }
+      const header = ['کد محصول','نام محصول','تحصیلات','جنسیت','رنگ','طعم','عطر','بافت','احساس دهانی'];
       const rows = evaluations.map(d => [
         d.productCode,d.productName,d.education,d.gender,
-        d.color,d.taste,d.smell,d.dominantTaste,
-        d.texture,d.mouthfeel
+        d.color,d.taste,d.smell,d.texture,d.mouthfeel
       ]);
-      let html = '<html xmlns:x="urn:schemas-microsoft-com:office:excel">'
-               + '<head><meta charset="UTF-8"></head><body><table><tr>';
+      let html = '<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="UTF-8"></head><body><table><tr>';
       header.forEach(h => html += `<th>${h}</th>`);
       html += '</tr>';
       rows.forEach(r => {
@@ -717,3 +627,4 @@ Mosayeb
   </script>
 </body>
 </html>
+```
