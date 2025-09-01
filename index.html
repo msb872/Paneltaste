@@ -16,7 +16,6 @@
       color: #333;
     }
 
-    /* فرم اصلی */
     form {
       border: 1px solid #ccc;
       padding: 1rem;
@@ -59,11 +58,19 @@
       border-radius: 4px;
       background: #fff;
     }
+    /* راست‌چین و row-reverse برای گزینه‌ها */
     .param-box .options {
       display: flex;
       flex-wrap: wrap;
       gap: .8rem;
       margin-top: .5rem;
+      direction: rtl;
+    }
+    .param-box .options label {
+      display: inline-flex;
+      flex-direction: row-reverse;
+      align-items: center;
+      gap: .3rem;
     }
 
     .buttons, .export-btns {
@@ -83,6 +90,8 @@
     .export-btns button.csv    { background: #388e3c; }
     .export-btns button.excel  { background: #1e88e5; }
     .export-btns button.delete { background: #d32f2f; }
+    .export-btns button.html   { background: #6a1b9a; }
+    .export-btns button.html:hover { background: #4a148c; }
 
     #tableProductName {
       font-weight: bold;
@@ -109,7 +118,6 @@
     }
     .action-btn.delete { background: #d32f2f; }
 
-    /* نمودارها */
     .charts-row {
       display: flex;
       flex-wrap: wrap;
@@ -127,7 +135,32 @@
       font-size: .95rem;
     }
 
-    /* دکمه‌های شناور راهنما/درباره */
+    /* انتخاب نمونه مطلوب */
+    .best-selection {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      direction: rtl;
+      margin-top: 1rem;
+      align-items: center;
+    }
+    .best-selection label {
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+    }
+    .best-selection button {
+      padding: .4rem .8rem;
+      border: none;
+      border-radius: 4px;
+      background: #1976d2;
+      color: #fff;
+      cursor: pointer;
+    }
+    .best-selection button:hover {
+      background: #0f5caa;
+    }
+
     .float-buttons {
       position: fixed;
       bottom: 1rem;
@@ -150,12 +183,21 @@
       background: #0f5caa;
     }
 
-    /* چاپ: فقط نمودارها دو ستونه */
+    .result-box {
+      border: 2px solid #4caf50;
+      background: #e8f5e9;
+      padding: 1rem;
+      margin-top: 1rem;
+      border-radius: 6px;
+      font-weight: bold;
+      text-align: center;
+      font-size: 1.1rem;
+      color: #2e7d32;
+    }
+
     @media print {
       form, .buttons, .export-btns, .float-buttons { display: none !important; }
-      /* جدول و تحلیل تک ستونه */
-      #tableProductName, h3, #analysis, table { page-break-inside: avoid; }
-      /* نمودارها دو ستونه */
+      #tableProductName, h3, #analysis, #resultBox, table { page-break-inside: avoid; }
       .charts-row {
         display: block;
         column-count: 2;
@@ -215,62 +257,72 @@
 
     <fieldset>
       <legend>ارزیابی پارامترها</legend>
-      <div class="param-row">
-        <div class="param-box">
-          <label>رنگ:</label>
-          <div class="options">
-            <label><input name="color" type="radio" value="5" required>خیلی خوب</label>
-            <label><input name="color" type="radio" value="4">خوب</label>
-            <label><input name="color" type="radio" value="3">متوسط</label>
-            <label><input name="color" type="radio" value="2">ضعیف</label>
-            <label><input name="color" type="radio" value="1">خیلی ضعیف</label>
-          </div>
-        </div>
-        <div class="param-box">
-          <label>طعم و مزه:</label>
-          <div class="options">
-            <label><input name="taste" type="radio" value="5" required>خیلی خوب</label>
-            <label><input name="taste" type="radio" value="4">خوب</label>
-            <label><input name="taste" type="radio" value="3">متوسط</label>
-            <label><input name="taste" type="radio" value="2">ضعیف</label>
-            <label><input name="taste" type="radio" value="1">خیلی ضعیف</label>
-          </div>
+
+      <!-- رنگ -->
+      <div class="param-box">
+        <label>رنگ:</label>
+        <div class="options">
+          <label><input name="color" type="radio" value="5" required>خیلی خوب</label>
+          <label><input name="color" type="radio" value="4">خوب</label>
+          <label><input name="color" type="radio" value="3">متوسط</label>
+          <label><input name="color" type="radio" value="2">ضعیف</label>
+          <label><input name="color" type="radio" value="1">خیلی ضعیف</label>
+          <label><input name="color" type="radio" value="0">نظری ندارم</label>
         </div>
       </div>
-      <div class="param-row">
-        <div class="param-box">
-          <label>عطر و بو:</label>
-          <div class="options">
-            <label><input name="smell" type="radio" value="5" required>خیلی خوب</label>
-            <label><input name="smell" type="radio" value="4">خوب</label>
-            <label><input name="smell" type="radio" value="3">متوسط</label>
-            <label><input name="smell" type="radio" value="2">ضعیف</label>
-            <label><input name="smell" type="radio" value="1">خیلی ضعیف</label>
-          </div>
-        </div>
-        <div class="param-box">
-          <label>بافت:</label>
-          <div class="options">
-            <label><input name="texture" type="radio" value="5" required>خیلی خوب</label>
-            <label><input name="texture" type="radio" value="4">خوب</label>
-            <label><input name="texture" type="radio" value="3">متوسط</label>
-            <label><input name="texture" type="radio" value="2">ضعیف</label>
-            <label><input name="texture" type="radio" value="1">خیلی ضعیف</label>
-          </div>
+
+      <!-- طعم و مزه -->
+      <div class="param-box">
+        <label>طعم و مزه:</label>
+        <div class="options">
+          <label><input name="taste" type="radio" value="5" required>خیلی خوب</label>
+          <label><input name="taste" type="radio" value="4">خوب</label>
+          <label><input name="taste" type="radio" value="3">متوسط</label>
+          <label><input name="taste" type="radio" value="2">ضعیف</label>
+          <label><input name="taste" type="radio" value="1">خیلی ضعیف</label>
+          <label><input name="taste" type="radio" value="0">نظری ندارم</label>
         </div>
       </div>
-      <div class="param-row">
-        <div class="param-box">
-          <label>احساس دهانی:</label>
-          <div class="options">
-            <label><input name="mouthfeel" type="radio" value="5" required>خیلی خوب</label>
-            <label><input name="mouthfeel" type="radio" value="4">خوب</label>
-            <label><input name="mouthfeel" type="radio" value="3">متوسط</label>
-            <label><input name="mouthfeel" type="radio" value="2">ضعیف</label>
-            <label><input name="mouthfeel" type="radio" value="1">خیلی ضعیف</label>
-          </div>
+
+      <!-- عطر و بو -->
+      <div class="param-box">
+        <label>عطر و بو:</label>
+        <div class="options">
+          <label><input name="smell" type="radio" value="5" required>خیلی خوب</label>
+          <label><input name="smell" type="radio" value="4">خوب</label>
+          <label><input name="smell" type="radio" value="3">متوسط</label>
+          <label><input name="smell" type="radio" value="2">ضعیف</label>
+          <label><input name="smell" type="radio" value="1">خیلی ضعیف</label>
+          <label><input name="smell" type="radio" value="0">نظری ندارم</label>
         </div>
       </div>
+
+      <!-- بافت -->
+      <div class="param-box">
+        <label>بافت:</label>
+        <div class="options">
+          <label><input name="texture" type="radio" value="5" required>خیلی خوب</label>
+          <label><input name="texture" type="radio" value="4">خوب</label>
+          <label><input name="texture" type="radio" value="3">متوسط</label>
+          <label><input name="texture" type="radio" value="2">ضعیف</label>
+          <label><input name="texture" type="radio" value="1">خیلی ضعیف</label>
+          <label><input name="texture" type="radio" value="0">نظری ندارم</label>
+        </div>
+      </div>
+
+      <!-- احساس دهانی -->
+      <div class="param-box">
+        <label>احساس دهانی:</label>
+        <div class="options">
+          <label><input name="mouthfeel" type="radio" value="5" required>خیلی خوب</label>
+          <label><input name="mouthfeel" type="radio" value="4">خوب</label>
+          <label><input name="mouthfeel" type="radio" value="3">متوسط</label>
+          <label><input name="mouthfeel" type="radio" value="2">ضعیف</label>
+          <label><input name="mouthfeel" type="radio" value="1">خیلی ضعیف</label>
+          <label><input name="mouthfeel" type="radio" value="0">نظری ندارم</label>
+        </div>
+      </div>
+
       <div class="buttons">
         <button type="submit">ثبت</button>
         <button id="resetBtn" type="button">ریست کامل</button>
@@ -294,13 +346,15 @@
   </table>
 
   <div class="export-btns">
-    <button class="csv" onclick="exportCSV()">Export CSV</button>
+    <button class="csv"   onclick="exportCSV()">Export CSV</button>
     <button class="excel" onclick="exportExcel()">Export Excel</button>
-    <button class="delete" onclick="clearAll()">پاک کردن همه</button>
+    <button class="delete"onclick="clearAll()">پاک کردن همه</button>
+    <button class="html"  onclick="exportHTML()">ذخیره HTML</button>
   </div>
 
   <h3>تحلیل مقایسه‌ای</h3>
   <div id="analysis"></div>
+  <div id="resultBox" class="result-box"></div>
 
   <h3>نمودارها</h3>
   <div class="charts-row">
@@ -326,17 +380,17 @@
     </div>
   </div>
 
-  <!-- دکمه‌های خوانا و شناور -->
   <div class="float-buttons">
-    <button id="helpBtn" type="button">📋 راهنما</button>
+    <button id="helpBtn"    type="button">📋 راهنما</button>
     <button id="contactBtn" type="button">ℹ️ درباره نویسنده</button>
   </div>
 
   <script>
     Chart.register(ChartDataLabels);
 
-    let evaluations = JSON.parse(localStorage.getItem('evaluations') || '[]');
+    let evaluations  = JSON.parse(localStorage.getItem('evaluations') || '[]');
     let editingIndex = -1;
+    let charts       = {};
 
     document.addEventListener('DOMContentLoaded', () => {
       setJalaliDate();
@@ -351,7 +405,7 @@
       document.getElementById('helpBtn').addEventListener('click', () => {
         alert(`راهنمای فرم ارزیابی:
 1. مشخصات فردی: تحصیلات، جنسیت، کد محصول (A–G یا سایر) و نام محصول.
-2. ارزیابی: رنگ، طعم، عطر، بافت و احساس دهانی (هرکدام 1–5).
+2. ارزیابی: رنگ، طعم، عطر، بافت و احساس دهانی (هرکدام 1–5 یا نظری ندارم).
 3. ثبت: ذخیره و به‌روزرسانی.
 4. ریست: پاک کردن فرم.
 5. چاپ: نسخه چاپی با نمودارها دو ستونه.`);
@@ -359,34 +413,36 @@
 
       document.getElementById('contactBtn').addEventListener('click', () => {
         alert(`درباره نویسنده:
-نام: Mosayeb  
-تخصص: توسعه وب و تحلیل داده  
+نام: Mosayeb khani  
+تخصص: مهندسی صنایع غذایی  
 ایمیل: mosayeb872@gmail.com  
-📬 ایده‌های شما، سوخت نسخه‌های بعدی هستند!`);
+تماس:+989173206052`);
       });
 
       document.getElementById('evaluation-form').addEventListener('submit', e => {
         e.preventDefault();
-        const f = e.target;
+        const f    = e.target;
         const code = f.productCode.value === 'manual'
-                     ? f.manualProductCode.value.trim()
-                     : f.productCode.value;
+                   ? f.manualProductCode.value.trim()
+                   : f.productCode.value;
         const data = {
           productCode: code,
           productName: f.productName.value,
-          education: f.education.value,
-          gender: f.gender.value,
-          color: +f.color.value,
-          taste: +f.taste.value,
-          smell: +f.smell.value,
-          texture: +f.texture.value,
-          mouthfeel: +f.mouthfeel.value
+          education:   f.education.value,
+          gender:      f.gender.value,
+          color:       +f.color.value,
+          taste:       +f.taste.value,
+          smell:       +f.smell.value,
+          texture:     +f.texture.value,
+          mouthfeel:   +f.mouthfeel.value
         };
+
         if (editingIndex > -1) evaluations[editingIndex] = data;
-        else evaluations.push(data);
+        else               evaluations.push(data);
 
         localStorage.setItem('evaluations', JSON.stringify(evaluations));
         localStorage.setItem('currentProductName', data.productName);
+
         resetForm();
         loadTable();
         updateAnalysisAndCharts();
@@ -427,7 +483,7 @@
 
     function loadTable() {
       const nameDiv = document.getElementById('tableProductName');
-      const prod = localStorage.getItem('currentProductName') || '';
+      const prod    = localStorage.getItem('currentProductName') || '';
       nameDiv.innerText = prod ? `نام محصول: ${prod}` : '';
 
       const tbody = document.querySelector('#data-table tbody');
@@ -439,11 +495,11 @@
           <td>${d.productName}</td>
           <td>${d.education}</td>
           <td>${d.gender}</td>
-          <td>${d.color}</td>
-          <td>${d.taste}</td>
-          <td>${d.smell}</td>
-          <td>${d.texture}</td>
-          <td>${d.mouthfeel}</td>
+          <td>${d.color>0?d.color:'–'}</td>
+          <td>${d.taste>0?d.taste:'–'}</td>
+          <td>${d.smell>0?d.smell:'–'}</td>
+          <td>${d.texture>0?d.texture:'–'}</td>
+          <td>${d.mouthfeel>0?d.mouthfeel:'–'}</td>
           <td>
             <button class="action-btn" onclick="editRow(${i})">ویرایش</button>
             <button class="action-btn delete" onclick="deleteRow(${i})">حذف</button>
@@ -452,59 +508,18 @@
       });
     }
 
-    function editRow(i) {
-      const d = evaluations[i];
-      const f = document.getElementById('evaluation-form');
-      const manual = document.getElementById('manualProductCode');
-      if (!['A','B','C','D','E','F','G'].includes(d.productCode)) {
-        f.productCode.value = 'manual';
-        manual.disabled = false;
-        manual.required = true;
-        manual.value = d.productCode;
-      } else {
-        f.productCode.value = d.productCode;
-        manual.disabled = true;
-        manual.required = false;
-        manual.value = '';
-      }
-      f.productName.value = d.productName;
-      f.education.value   = d.education;
-      f.gender.value      = d.gender;
-      f.color.value       = d.color;
-      f.taste.value       = d.taste;
-      f.smell.value       = d.smell;
-      f.texture.value     = d.texture;
-      f.mouthfeel.value   = d.mouthfeel;
-      editingIndex = i;
-      window.scrollTo(0,0);
-    }
-
-    function deleteRow(i) {
-      if (!confirm('مطمئنید حذف شود؟')) return;
-      evaluations.splice(i,1);
-      localStorage.setItem('evaluations', JSON.stringify(evaluations));
-      loadTable();
-      updateAnalysisAndCharts();
-    }
-
-    function clearAll() {
-      if (!confirm('همه داده‌ها حذف شود؟')) return;
-      localStorage.removeItem('evaluations');
-      evaluations = [];
-      loadTable();
-      updateAnalysisAndCharts();
-    }
-
-    let charts = {};
-
     function updateAnalysisAndCharts() {
       const analysisDiv = document.getElementById('analysis');
+      const resultBox   = document.getElementById('resultBox');
+
       if (!evaluations.length) {
         analysisDiv.innerText = 'داده‌ای موجود نیست.';
-        Object.values(charts).forEach(c => c.clear());
+        resultBox.innerText = '';
+        Object.values(charts).forEach(c => c.clear && c.clear());
         return;
       }
-      const codes = Array.from(new Set(evaluations.map(d => d.productCode)));
+
+      const codes  = Array.from(new Set(evaluations.map(d => d.productCode)));
       const groups = {};
       codes.forEach(c => groups[c] = []);
       evaluations.forEach(d => groups[d.productCode].push(d));
@@ -512,41 +527,60 @@
       const avg = {};
       codes.forEach(code => {
         const arr = groups[code];
-        avg[code] = {
-          color:     arr.reduce((s,x) => s + x.color,0) / arr.length,
-          taste:     arr.reduce((s,x) => s + x.taste,0) / arr.length,
-          smell:     arr.reduce((s,x) => s + x.smell,0) / arr.length,
-          texture:   arr.reduce((s,x) => s + x.texture,0) / arr.length,
-          mouthfeel: arr.reduce((s,x) => s + x.mouthfeel,0) / arr.length
-        };
+        ['color','taste','smell','texture','mouthfeel'].forEach(prop => {
+          const vals = arr.map(x => x[prop]).filter(v => v > 0);
+          const sum  = vals.reduce((s,v) => s+v, 0);
+          avg[code] = avg[code] || {};
+          avg[code][prop] = vals.length ? sum/vals.length : 0;
+        });
       });
 
-      const rank = prop => [...codes].sort((a,b) => avg[b][prop] - avg[a][prop]);
-      const bestColor     = rank('color')[0];
-      const bestTaste     = rank('taste')[0];
-      const bestSmell     = rank('smell')[0];
-      const bestTexture   = rank('texture')[0];
-      const bestMouthfeel = rank('mouthfeel')[0];
-      const overall = codes.slice().sort((a,b) => {
-        const sumA = avg[a].color + avg[a].taste + avg[a].smell + avg[a].texture + avg[a].mouthfeel;
-        const sumB = avg[b].color + avg[b].taste + avg[b].smell + avg[b].texture + avg[b].mouthfeel;
-        return sumB - sumA;
-      })[0];
+      // تعیین همه نمونه‌های برتر مساوی
+      const bestPerProp = {};
+      ['color','taste','smell','texture','mouthfeel'].forEach(prop => {
+        const maxVal = Math.max(...codes.map(c => avg[c][prop]));
+        bestPerProp[prop] = codes.filter(c => avg[c][prop] === maxVal && maxVal>0);
+      });
 
-      analysisDiv.innerText =
-`• بخش رنگ: ${bestColor} (${avg[bestColor].color.toFixed(2)})  
-• بخش طعم و مزه: ${bestTaste} (${avg[bestTaste].taste.toFixed(2)})  
-• بخش عطر و بو: ${bestSmell} (${avg[bestSmell].smell.toFixed(2)})  
-• بخش بافت: ${bestTexture} (${avg[bestTexture].texture.toFixed(2)})  
-• بخش احساس دهانی: ${bestMouthfeel} (${avg[bestMouthfeel].mouthfeel.toFixed(2)})  
-• کلی: نمونه ${overall} برتر است.`;
+      // ساخت متن تحلیل
+      const lines = ['color','taste','smell','texture','mouthfeel'].map(prop => {
+        const titles = {
+          color: 'رنگ',
+          taste: 'طعم و مزه',
+          smell: 'عطر و بو',
+          texture: 'بافت',
+          mouthfeel: 'احساس دهانی'
+        };
+        const bests = bestPerProp[prop].length
+          ? bestPerProp[prop].join('، ')
+          : '–';
+        const nums = bestPerProp[prop].length
+          ? bestPerProp[prop].map(c => avg[c][prop].toFixed(2)).join('، ')
+          : '';
+        return `بخش ${titles[prop]}: ${bests}${nums?` (${nums})`:''}`;
+      });
 
-      const dataC = codes.map(c => avg[c].color.toFixed(2));
-      const dataT = codes.map(c => avg[c].taste.toFixed(2));
-      const dataS = codes.map(c => avg[c].smell.toFixed(2));
-      const dataX = codes.map(c => avg[c].texture.toFixed(2));
-      const dataM = codes.map(c => avg[c].mouthfeel.toFixed(2));
+      analysisDiv.innerHTML = lines.map(l => `• ${l}`).join('<br>');
+      resultBox.innerText = '';
 
+      // فرم انتخاب نمونه مطلوب
+      analysisDiv.insertAdjacentHTML('beforeend', `
+        <div class="best-selection">
+          <span>لطفاً نمونه مطلوب خود را انتخاب کنید:</span>
+          ${codes.map(c => `<label><input type="radio" name="userBest" value="${c}">${c}</label>`).join('')}
+          <button id="selectBestBtn" type="button">ثبت انتخاب</button>
+        </div>
+      `);
+      document.getElementById('selectBestBtn').onclick = () => {
+        const sel = document.querySelector('input[name="userBest"]:checked');
+        if (!sel) { alert('لطفاً یک نمونه را انتخاب کنید.'); return; }
+        resultBox.innerText = `نمونه کد ${sel.value}  از نظر ارزیاب مطلوب تر از سایر کدها می باشد.`;
+      };
+
+      // داده‌های نمودار
+      const dataSets = ['color','taste','smell','texture','mouthfeel'].map(prop =>
+        codes.map(c => avg[c][prop].toFixed(2))
+      );
       const palette = [
         'rgba(255,99,132,0.7)','rgba(54,162,235,0.7)',
         'rgba(255,206,86,0.7)','rgba(75,192,192,0.7)',
@@ -558,33 +592,40 @@
 
       const makeCfg = (label,data) => ({
         type: 'bar',
-        data: { labels: codes, datasets: [{ label, data, backgroundColor: codes.map(c => colors[c]) }] },
+        data: { labels: codes, datasets:[{ label,data, backgroundColor: codes.map(k=>colors[k]) }] },
         options: {
-          indexAxis: 'y',
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: { x: { min: 0, max: 5 } },
-          plugins: {
-            datalabels: { color: '#000', anchor: 'end', align: 'right', formatter: v => v }
-          }
+          indexAxis:'y', responsive:true, maintainAspectRatio:false,
+          scales:{ x:{ min:0, max:5 } },
+          plugins:{ datalabels:{ color:'#000', anchor:'end', align:'right', formatter:v=>v } }
         }
       });
 
-      if (!charts.colorChart) {
-        charts.colorChart     = new Chart(document.getElementById('colorChart'),     makeCfg('میانگین رنگ', dataC));
-        charts.tasteChart     = new Chart(document.getElementById('tasteChart'),     makeCfg('میانگین طعم و مزه', dataT));
-        charts.smellChart     = new Chart(document.getElementById('smellChart'),     makeCfg('میانگین عطر و بو', dataS));
-        charts.textureChart   = new Chart(document.getElementById('textureChart'),   makeCfg('میانگین بافت', dataX));
-        charts.mouthfeelChart = new Chart(document.getElementById('mouthfeelChart'), makeCfg('میانگین احساس دهانی', dataM));
-      } else {
-        [['colorChart',dataC],['tasteChart',dataT],['smellChart',dataS],
-         ['textureChart',dataX],['mouthfeelChart',dataM]].forEach(([key,dat]) => {
-          charts[key].data.labels = codes;
-          charts[key].data.datasets[0].data = dat;
-          charts[key].data.datasets[0].backgroundColor = codes.map(c => colors[c]);
-          charts[key].update();
-        });
-      }
+      const chartIds = ['colorChart','tasteChart','smellChart','textureChart','mouthfeelChart'];
+      chartIds.forEach((id,i) => {
+        if (!charts[id]) {
+          charts[id] = new Chart(document.getElementById(id), makeCfg(
+            document.querySelector(`#${id} + .chart-label`).innerText,
+            dataSets[i]
+          ));
+        } else {
+          charts[id].data.labels = codes;
+          charts[id].data.datasets[0].data = dataSets[i];
+          charts[id].data.datasets[0].backgroundColor = codes.map(k=>colors[k]);
+          charts[id].update();
+        }
+      });
+    }
+
+    function deleteRow(i) {
+      if (!confirm('مطمئنید حذف شود؟')) return;
+      evaluations.splice(i,1);
+      localStorage.setItem('evaluations', JSON.stringify(evaluations));
+      loadTable(); updateAnalysisAndCharts();
+    }
+    function clearAll() {
+      if (!confirm('همه داده‌ها حذف شود؟')) return;
+      localStorage.removeItem('evaluations');
+      evaluations=[]; loadTable(); updateAnalysisAndCharts();
     }
 
     function exportCSV() {
@@ -592,13 +633,14 @@
       const header = ['کد','نام','تحصیلات','جنسیت','رنگ','طعم','عطر','بافت','احساس'];
       const rows = evaluations.map(d => [
         d.productCode,d.productName,d.education,d.gender,
-        d.color,d.taste,d.smell,d.texture,d.mouthfeel
+        d.color>0?d.color:'',d.taste>0?d.taste:'',
+        d.smell>0?d.smell:'',d.texture>0?d.texture:'',d.mouthfeel>0?d.mouthfeel:''
       ]);
-      let csv = '\uFEFF' + header.join(',') + '\n' + rows.map(r => r.join(',')).join('\n');
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = 'evaluations.csv';
+      let csv = '\uFEFF'+header.join(',')+'\n'+rows.map(r=>r.join(',')).join('\n');
+      const blob=new Blob([csv],{ type:'text/csv;charset=utf-8;' });
+      const link=document.createElement('a');
+      link.href=URL.createObjectURL(blob);
+      link.download='evaluations.csv';
       link.click();
     }
 
@@ -607,21 +649,53 @@
       const header = ['کد محصول','نام محصول','تحصیلات','جنسیت','رنگ','طعم','عطر','بافت','احساس دهانی'];
       const rows = evaluations.map(d => [
         d.productCode,d.productName,d.education,d.gender,
-        d.color,d.taste,d.smell,d.texture,d.mouthfeel
+        d.color>0?d.color:'',d.taste>0?d.taste:'',
+        d.smell>0?d.smell:'',d.texture>0?d.texture:'',d.mouthfeel>0?d.mouthfeel:''
       ]);
       let html = '<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="UTF-8"></head><body><table><tr>';
-      header.forEach(h => html += `<th>${h}</th>`);
-      html += '</tr>';
-      rows.forEach(r => {
-        html += '<tr>';
-        r.forEach(cell => html += `<td>${cell}</td>`);
-        html += '</tr>';
+      header.forEach(h=>html+=`<th>${h}</th>`); html+='</tr>';
+      rows.forEach(r=>{ html+='<tr>'; r.forEach(c=>html+=`<td>${c}</td>`); html+='</tr>'; });
+      html+='</table></body></html>';
+      const blob=new Blob(['\uFEFF',html],{ type:'application/vnd.ms-excel' });
+      const link=document.createElement('a');
+      link.href=URL.createObjectURL(blob);
+      link.download='evaluations.xls';
+      link.click();
+    }
+
+    function exportHTML() {
+      const prodRaw=localStorage.getItem('currentProductName')||'بدون_نام';
+      const j=jalaali.toJalaali(new Date());
+      const dateStr=`${j.jy}${String(j.jm).padStart(2,'0')}${String(j.jd).padStart(2,'0')}`;
+      const prodClean=prodRaw.replace(/\s+/g,'_').replace(/[^آ-یA-Za-z0-9_\-]/g,'');
+      const filename=`ارزیابی-${prodClean}-${dateStr}.html`;
+
+      let smallHtml=`<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head><meta charset="UTF-8"><title>ارزیابی ${prodRaw} - ${dateStr}</title>
+<style>body{font-family:Tahoma,sans-serif;padding:1rem;direction:rtl;text-align:right;}
+table{width:100%;border-collapse:collapse;margin-bottom:1rem;}
+th,td{border:1px solid #ccc;padding:.6rem;text-align:center;}
+img{max-width:100%;height:auto;margin-bottom:1rem;display:block;}
+.result-box{border:2px solid #4caf50;background:#e8f5e9;padding:1rem;margin-bottom:1rem;border-radius:6px;color:#2e7d32;font-weight:bold;}
+</style></head><body>
+<h3>جدول ارزیابی‌ها</h3>${document.getElementById('data-table').outerHTML}
+<h3>تحلیل مقایسه‌ای</h3>${document.getElementById('analysis').innerHTML}
+<div class="result-box">${document.getElementById('resultBox').innerHTML}</div>
+<h3>نمودارها</h3>`;
+
+      ['colorChart','tasteChart','smellChart','textureChart','mouthfeelChart']
+      .forEach(id=>{
+        const canvas=document.getElementById(id);
+        const label=canvas.nextElementSibling.innerText;
+        smallHtml+=`<h4>${label}</h4><img src="${canvas.toDataURL('image/png')}" alt="${label}"/>`;
       });
-      html += '</table></body></html>';
-      const blob = new Blob(['\uFEFF', html], { type: 'application/vnd.ms-excel' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = 'evaluations.xls';
+      smallHtml+='</body></html>';
+
+      const blob=new Blob([smallHtml],{ type:'text/html;charset=utf-8' });
+      const link=document.createElement('a');
+      link.href=URL.createObjectURL(blob);
+      link.download=filename;
       link.click();
     }
   </script>
