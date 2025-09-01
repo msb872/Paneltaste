@@ -7,83 +7,73 @@
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/jalaali-js/dist/jalaali.min.js"></script>
   <style>
+    /* پیش‌نیاز برای فشرده‌سازی فضای صفحه */
+    * { box-sizing: border-box; }
+
     body {
-      font-family: Tahoma, sans-serif;
       margin: 20px auto;
-      max-width: 1200px;
+      max-width: 1400px;
+      font-family: Tahoma, sans-serif;
       direction: rtl;
       text-align: right;
       color: #333;
+      /*background: linear-gradient(135deg, #e0f7fa 0%, #ffe0b2 100%);*/
     }
 
     form {
-      border: 1px solid #ccc;
-      padding: 1rem;
+      padding: 0.8rem;
+      background: rgba(255,255,255,0.9);
       border-radius: 6px;
-      background: #fafafa;
     }
     fieldset {
+      margin-bottom: 0.8rem;
+      padding: 0.8rem;
       border: 1px solid #bbb;
-      padding: 1rem;
-      margin-bottom: 1rem;
-      border-radius: 4px;
-    }
-    legend { font-weight: bold; }
-    label { margin-left: .5rem; cursor: pointer; }
-
-    .product-code-options {
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-      flex-wrap: wrap;
-      margin-top: 1rem;
-    }
-    .product-code-options input[type="text"] {
-      width: 120px;
-      padding: .4rem;
-      border: 1px solid #bbb;
-      border-radius: 4px;
-    }
-
-    .param-row {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      margin-bottom: 1rem;
-    }
-    .param-box {
-      flex: 1 1 200px;
-      border: 1px solid #ddd;
-      padding: .8rem;
       border-radius: 4px;
       background: #fff;
     }
-    /* راست‌چین و row-reverse برای گزینه‌ها */
+    legend { font-weight: bold; }
+
+    /* چیدمان پارامترها با CSS Grid */
+    .param-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 0.6rem;
+      margin-bottom: 0.6rem;
+    }
+    .param-box {
+      padding: 0.5rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: #fafafa;
+    }
+
+    /* گزینه‌های رادیویی راست‌چین */
     .param-box .options {
       display: flex;
       flex-wrap: wrap;
-      gap: .8rem;
-      margin-top: .5rem;
+      gap: 0.5rem;
+      margin-top: 0.3rem;
       direction: rtl;
     }
     .param-box .options label {
       display: inline-flex;
       flex-direction: row-reverse;
       align-items: center;
-      gap: .3rem;
+      gap: 0.3rem;
+      cursor: pointer;
     }
 
-    .buttons, .export-btns {
-      margin-top: 1rem;
-    }
-    .buttons button,
-    .export-btns button {
-      margin-left: .5rem;
-      padding: .6rem 1.2rem;
+    /* دکمه‌ها */
+    .buttons, .export-btns { margin-top: 0.6rem; }
+    .buttons button, .export-btns button {
+      padding: 0.4rem 0.8rem;
+      margin-left: 0.3rem;
       border: none;
       border-radius: 4px;
       color: #fff;
       cursor: pointer;
+      font-size: 0.9rem;
     }
     .buttons button { background: #1976d2; }
     .buttons button:hover { background: #0f5caa; }
@@ -93,125 +83,91 @@
     .export-btns button.html   { background: #6a1b9a; }
     .export-btns button.html:hover { background: #4a148c; }
 
-    #tableProductName {
-      font-weight: bold;
-      margin-top: 1rem;
-    }
+    /* جدول */
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 1rem;
+      margin-top: 0.8rem;
+      font-size: 0.85rem;
     }
     th, td {
       border: 1px solid #ccc;
-      padding: .6rem;
+      padding: 0.4rem;
       text-align: center;
     }
-    .action-btn {
-      background: #f57c00;
-      margin: 0 .2rem;
-      padding: .2rem .6rem;
-      border: none;
-      border-radius: 4px;
-      color: #fff;
-      cursor: pointer;
-    }
-    .action-btn.delete { background: #d32f2f; }
 
+    /* نمودارها با grid */
     .charts-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      margin-top: 1rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 0.6rem;
+      margin-top: 0.8rem;
     }
-    .chart-container {
-      flex: 1 1 200px;
-      height: 200px;
-      position: relative;
-    }
-    .chart-label {
-      text-align: center;
-      margin-top: .3rem;
-      font-size: .95rem;
-    }
+    .chart-container { height: 150px; }
 
     /* انتخاب نمونه مطلوب */
     .best-selection {
       display: flex;
       flex-wrap: wrap;
-      gap: 1rem;
+      gap: 0.6rem;
+      margin-top: 0.8rem;
       direction: rtl;
-      margin-top: 1rem;
       align-items: center;
     }
     .best-selection label {
       display: inline-flex;
       align-items: center;
-      gap: .3rem;
+      gap: 0.3rem;
+      cursor: pointer;
     }
     .best-selection button {
-      padding: .4rem .8rem;
+      padding: 0.4rem 0.8rem;
       border: none;
       border-radius: 4px;
       background: #1976d2;
       color: #fff;
       cursor: pointer;
+      font-size: 0.9rem;
     }
-    .best-selection button:hover {
-      background: #0f5caa;
+    .best-selection button:hover { background: #0f5caa; }
+
+    /* باکس نتیجه */
+    .result-box {
+      padding: 0.8rem;
+      margin-top: 0.8rem;
+      border: 2px solid #4caf50;
+      background: #e8f5e9;
+      border-radius: 6px;
+      color: #2e7d32;
+      font-weight: bold;
     }
 
+    /* دکمه‌های شناور */
     .float-buttons {
       position: fixed;
       bottom: 1rem;
       right: 1rem;
       display: flex;
       flex-direction: column;
-      gap: .5rem;
+      gap: 0.5rem;
       z-index: 1000;
     }
     .float-buttons button {
-      padding: .6rem 1rem;
+      padding: 0.6rem 1rem;
       border: none;
       border-radius: 4px;
       background: #1976d2;
       color: #fff;
       cursor: pointer;
-      box-shadow: 0 2px 6px rgba(0,0,0,.2);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      font-size: 0.9rem;
     }
-    .float-buttons button:hover {
-      background: #0f5caa;
-    }
+    .float-buttons button:hover { background: #0f5caa; }
 
-    .result-box {
-      border: 2px solid #4caf50;
-      background: #e8f5e9;
-      padding: 1rem;
-      margin-top: 1rem;
-      border-radius: 6px;
-      font-weight: bold;
-      text-align: center;
-      font-size: 1.1rem;
-      color: #2e7d32;
-    }
-
+    /* حالت چاپ */
     @media print {
       form, .buttons, .export-btns, .float-buttons { display: none !important; }
-      #tableProductName, h3, #analysis, #resultBox, table { page-break-inside: avoid; }
-      .charts-row {
-        display: block;
-        column-count: 2;
-        column-gap: 1rem;
-      }
-      .chart-container {
-        break-inside: avoid-column;
-        page-break-inside: avoid;
-        margin-bottom: 1rem;
-      }
-      .chart-label, canvas {
-        display: block !important;
-        page-break-inside: avoid;
-      }
+      .charts-row { column-count: 2; column-gap: 0.8rem; }
     }
   </style>
 </head>
@@ -219,7 +175,7 @@
 
   <h2 id="jalali-date" aria-label="تاریخ شمسی"></h2>
 
-  <form id="evaluation-form" aria-label="فرم ارزیابی تست پنل">
+  <form id="evaluation-form" aria-label="فرم ارزیابی و تست پنل">
     <fieldset>
       <legend>مشخصات فردی</legend>
       <div>
@@ -230,7 +186,7 @@
         <label><input name="education" type="radio" value="ارشد">ارشد</label>
         <label><input name="education" type="radio" value="دکترا">دکترا</label>
       </div>
-      <div style="margin-top:1rem;">
+      <div>
         <span>جنسیت:</span>
         <label><input name="gender" type="radio" value="آقا" required>آقا</label>
         <label><input name="gender" type="radio" value="خانم">خانم</label>
@@ -248,7 +204,7 @@
         <input id="manualProductCode" name="manualProductCode"
                type="text" placeholder="وارد کردن کد محصول" disabled>
       </div>
-      <div style="margin-top:1rem;">
+      <div>
         <label for="productName">نام محصول:</label>
         <input id="productName" name="productName" type="text"
                placeholder="نام محصول را وارد کنید" required>
@@ -257,72 +213,63 @@
 
     <fieldset>
       <legend>ارزیابی پارامترها</legend>
-
-      <!-- رنگ -->
-      <div class="param-box">
-        <label>رنگ:</label>
-        <div class="options">
-          <label><input name="color" type="radio" value="5" required>خیلی خوب</label>
-          <label><input name="color" type="radio" value="4">خوب</label>
-          <label><input name="color" type="radio" value="3">متوسط</label>
-          <label><input name="color" type="radio" value="2">ضعیف</label>
-          <label><input name="color" type="radio" value="1">خیلی ضعیف</label>
-          <label><input name="color" type="radio" value="0">نظری ندارم</label>
+      <div class="param-row">
+        <div class="param-box">
+          <label>رنگ:</label>
+          <div class="options">
+            <label><input name="color" type="radio" value="5" required>خیلی خوب</label>
+            <label><input name="color" type="radio" value="4">خوب</label>
+            <label><input name="color" type="radio" value="3">متوسط</label>
+            <label><input name="color" type="radio" value="2">ضعیف</label>
+            <label><input name="color" type="radio" value="1">خیلی ضعیف</label>
+            <label><input name="color" type="radio" value="0">نظری ندارم</label>
+          </div>
+        </div>
+        <div class="param-box">
+          <label>طعم و مزه:</label>
+          <div class="options">
+            <label><input name="taste" type="radio" value="5" required>خیلی خوب</label>
+            <label><input name="taste" type="radio" value="4">خوب</label>
+            <label><input name="taste" type="radio" value="3">متوسط</label>
+            <label><input name="taste" type="radio" value="2">ضعیف</label>
+            <label><input name="taste" type="radio" value="1">خیلی ضعیف</label>
+            <label><input name="taste" type="radio" value="0">نظری ندارم</label>
+          </div>
+        </div>
+        <div class="param-box">
+          <label>عطر و بو:</label>
+          <div class="options">
+            <label><input name="smell" type="radio" value="5" required>خیلی خوب</label>
+            <label><input name="smell" type="radio" value="4">خوب</label>
+            <label><input name="smell" type="radio" value="3">متوسط</label>
+            <label><input name="smell" type="radio" value="2">ضعیف</label>
+            <label><input name="smell" type="radio" value="1">خیلی ضعیف</label>
+            <label><input name="smell" type="radio" value="0">نظری ندارم</label>
+          </div>
+        </div>
+        <div class="param-box">
+          <label>بافت:</label>
+          <div class="options">
+            <label><input name="texture" type="radio" value="5" required>خیلی خوب</label>
+            <label><input name="texture" type="radio" value="4">خوب</label>
+            <label><input name="texture" type="radio" value="3">متوسط</label>
+            <label><input name="texture" type="radio" value="2">ضعیف</label>
+            <label><input name="texture" type="radio" value="1">خیلی ضعیف</label>
+            <label><input name="texture" type="radio" value="0">نظری ندارم</label>
+          </div>
+        </div>
+        <div class="param-box">
+          <label>احساس دهانی:</label>
+          <div class="options">
+            <label><input name="mouthfeel" type="radio" value="5" required>خیلی خوب</label>
+            <label><input name="mouthfeel" type="radio" value="4">خوب</label>
+            <label><input name="mouthfeel" type="radio" value="3">متوسط</label>
+            <label><input name="mouthfeel" type="radio" value="2">ضعیف</label>
+            <label><input name="mouthfeel" type="radio" value="1">خیلی ضعیف</label>
+            <label><input name="mouthfeel" type="radio" value="0">نظری ندارم</label>
+          </div>
         </div>
       </div>
-
-      <!-- طعم و مزه -->
-      <div class="param-box">
-        <label>طعم و مزه:</label>
-        <div class="options">
-          <label><input name="taste" type="radio" value="5" required>خیلی خوب</label>
-          <label><input name="taste" type="radio" value="4">خوب</label>
-          <label><input name="taste" type="radio" value="3">متوسط</label>
-          <label><input name="taste" type="radio" value="2">ضعیف</label>
-          <label><input name="taste" type="radio" value="1">خیلی ضعیف</label>
-          <label><input name="taste" type="radio" value="0">نظری ندارم</label>
-        </div>
-      </div>
-
-      <!-- عطر و بو -->
-      <div class="param-box">
-        <label>عطر و بو:</label>
-        <div class="options">
-          <label><input name="smell" type="radio" value="5" required>خیلی خوب</label>
-          <label><input name="smell" type="radio" value="4">خوب</label>
-          <label><input name="smell" type="radio" value="3">متوسط</label>
-          <label><input name="smell" type="radio" value="2">ضعیف</label>
-          <label><input name="smell" type="radio" value="1">خیلی ضعیف</label>
-          <label><input name="smell" type="radio" value="0">نظری ندارم</label>
-        </div>
-      </div>
-
-      <!-- بافت -->
-      <div class="param-box">
-        <label>بافت:</label>
-        <div class="options">
-          <label><input name="texture" type="radio" value="5" required>خیلی خوب</label>
-          <label><input name="texture" type="radio" value="4">خوب</label>
-          <label><input name="texture" type="radio" value="3">متوسط</label>
-          <label><input name="texture" type="radio" value="2">ضعیف</label>
-          <label><input name="texture" type="radio" value="1">خیلی ضعیف</label>
-          <label><input name="texture" type="radio" value="0">نظری ندارم</label>
-        </div>
-      </div>
-
-      <!-- احساس دهانی -->
-      <div class="param-box">
-        <label>احساس دهانی:</label>
-        <div class="options">
-          <label><input name="mouthfeel" type="radio" value="5" required>خیلی خوب</label>
-          <label><input name="mouthfeel" type="radio" value="4">خوب</label>
-          <label><input name="mouthfeel" type="radio" value="3">متوسط</label>
-          <label><input name="mouthfeel" type="radio" value="2">ضعیف</label>
-          <label><input name="mouthfeel" type="radio" value="1">خیلی ضعیف</label>
-          <label><input name="mouthfeel" type="radio" value="0">نظری ندارم</label>
-        </div>
-      </div>
-
       <div class="buttons">
         <button type="submit">ثبت</button>
         <button id="resetBtn" type="button">ریست کامل</button>
@@ -387,10 +334,8 @@
 
   <script>
     Chart.register(ChartDataLabels);
-
-    let evaluations  = JSON.parse(localStorage.getItem('evaluations') || '[]');
-    let editingIndex = -1;
-    let charts       = {};
+    let evaluations = JSON.parse(localStorage.getItem('evaluations') || '[]');
+    let editingIndex = -1, charts = {};
 
     document.addEventListener('DOMContentLoaded', () => {
       setJalaliDate();
@@ -398,60 +343,46 @@
       loadTable();
       updateAnalysisAndCharts();
 
-      document.getElementById('resetBtn').addEventListener('click', () => {
-        resetForm(); window.scrollTo(0,0);
-      });
-
-      document.getElementById('helpBtn').addEventListener('click', () => {
-        alert(`راهنمای فرم ارزیابی:
-1. مشخصات فردی: تحصیلات، جنسیت، کد محصول (A–G یا سایر) و نام محصول.
-2. ارزیابی: رنگ، طعم، عطر، بافت و احساس دهانی (هرکدام 1–5 یا نظری ندارم).
-3. ثبت: ذخیره و به‌روزرسانی.
-4. ریست: پاک کردن فرم.
-5. چاپ: نسخه چاپی با نمودارها دو ستونه.`);
-      });
-
-      document.getElementById('contactBtn').addEventListener('click', () => {
-        alert(`درباره نویسنده:
-نام: Mosayeb khani  
-تخصص: مهندسی صنایع غذایی  
-ایمیل: mosayeb872@gmail.com  
-تماس:+989173206052`);
-      });
-
-      document.getElementById('evaluation-form').addEventListener('submit', e => {
+      document.getElementById('resetBtn').onclick = () => {
+        resetForm();
+        window.scrollTo(0, 0);
+      };
+      document.getElementById('helpBtn').onclick = () => {
+        alert(`راهنمای فرم ارزیابی:\n1. مشخصات فردی\n2. ارزیابی پارامترها (یا نظری ندارم)\n3. ثبت و به‌روزرسانی\n4. ریست فرم\n5. چاپ`);
+      };
+      document.getElementById('contactBtn').onclick = () => {
+        alert(`درباره نویسنده:\nنام: Mosayeb khani\nتخصص: مهندسی صنایع غذایی\nایمیل: mosayeb872@gmail.com`);
+      };
+      document.getElementById('evaluation-form').onsubmit = e => {
         e.preventDefault();
-        const f    = e.target;
+        const f = e.target;
         const code = f.productCode.value === 'manual'
                    ? f.manualProductCode.value.trim()
                    : f.productCode.value;
         const data = {
           productCode: code,
           productName: f.productName.value,
-          education:   f.education.value,
-          gender:      f.gender.value,
-          color:       +f.color.value,
-          taste:       +f.taste.value,
-          smell:       +f.smell.value,
-          texture:     +f.texture.value,
-          mouthfeel:   +f.mouthfeel.value
+          education: f.education.value,
+          gender: f.gender.value,
+          color:     +f.color.value,
+          taste:     +f.taste.value,
+          smell:     +f.smell.value,
+          texture:   +f.texture.value,
+          mouthfeel: +f.mouthfeel.value
         };
-
         if (editingIndex > -1) evaluations[editingIndex] = data;
-        else               evaluations.push(data);
-
+        else evaluations.push(data);
         localStorage.setItem('evaluations', JSON.stringify(evaluations));
         localStorage.setItem('currentProductName', data.productName);
-
         resetForm();
         loadTable();
         updateAnalysisAndCharts();
-      });
+      };
     });
 
     function bindManualToggle() {
-      document.querySelectorAll('input[name="productCode"]').forEach(radio => {
-        radio.addEventListener('change', e => {
+      document.querySelectorAll('input[name="productCode"]').forEach(r => {
+        r.onchange = e => {
           const manual = document.getElementById('manualProductCode');
           if (e.target.value === 'manual') {
             manual.disabled = false;
@@ -462,7 +393,7 @@
             manual.required = false;
             manual.value = '';
           }
-        });
+        };
       });
     }
 
@@ -475,17 +406,14 @@
     function resetForm() {
       document.getElementById('evaluation-form').reset();
       editingIndex = -1;
-      const manual = document.getElementById('manualProductCode');
-      manual.disabled = true;
-      manual.required = false;
-      manual.value = '';
+      const m = document.getElementById('manualProductCode');
+      m.disabled = true; m.required = false; m.value = '';
     }
 
     function loadTable() {
       const nameDiv = document.getElementById('tableProductName');
-      const prod    = localStorage.getItem('currentProductName') || '';
+      const prod = localStorage.getItem('currentProductName') || '';
       nameDiv.innerText = prod ? `نام محصول: ${prod}` : '';
-
       const tbody = document.querySelector('#data-table tbody');
       tbody.innerHTML = '';
       evaluations.forEach((d,i) => {
@@ -508,112 +436,23 @@
       });
     }
 
-    function updateAnalysisAndCharts() {
-      const analysisDiv = document.getElementById('analysis');
-      const resultBox   = document.getElementById('resultBox');
-
-      if (!evaluations.length) {
-        analysisDiv.innerText = 'داده‌ای موجود نیست.';
-        resultBox.innerText = '';
-        Object.values(charts).forEach(c => c.clear && c.clear());
-        return;
+    function editRow(i) {
+      const d = evaluations[i], f = document.getElementById('evaluation-form');
+      const m = document.getElementById('manualProductCode');
+      if (!['A','B','C','D','E','F','G'].includes(d.productCode)) {
+        f.productCode.value = 'manual'; m.disabled = false; m.required = true; m.value = d.productCode;
+      } else {
+        f.productCode.value = d.productCode; m.disabled = true; m.required = false; m.value = '';
       }
-
-      const codes  = Array.from(new Set(evaluations.map(d => d.productCode)));
-      const groups = {};
-      codes.forEach(c => groups[c] = []);
-      evaluations.forEach(d => groups[d.productCode].push(d));
-
-      const avg = {};
-      codes.forEach(code => {
-        const arr = groups[code];
-        ['color','taste','smell','texture','mouthfeel'].forEach(prop => {
-          const vals = arr.map(x => x[prop]).filter(v => v > 0);
-          const sum  = vals.reduce((s,v) => s+v, 0);
-          avg[code] = avg[code] || {};
-          avg[code][prop] = vals.length ? sum/vals.length : 0;
-        });
-      });
-
-      // تعیین همه نمونه‌های برتر مساوی
-      const bestPerProp = {};
-      ['color','taste','smell','texture','mouthfeel'].forEach(prop => {
-        const maxVal = Math.max(...codes.map(c => avg[c][prop]));
-        bestPerProp[prop] = codes.filter(c => avg[c][prop] === maxVal && maxVal>0);
-      });
-
-      // ساخت متن تحلیل
-      const lines = ['color','taste','smell','texture','mouthfeel'].map(prop => {
-        const titles = {
-          color: 'رنگ',
-          taste: 'طعم و مزه',
-          smell: 'عطر و بو',
-          texture: 'بافت',
-          mouthfeel: 'احساس دهانی'
-        };
-        const bests = bestPerProp[prop].length
-          ? bestPerProp[prop].join('، ')
-          : '–';
-        const nums = bestPerProp[prop].length
-          ? bestPerProp[prop].map(c => avg[c][prop].toFixed(2)).join('، ')
-          : '';
-        return `بخش ${titles[prop]}: ${bests}${nums?` (${nums})`:''}`;
-      });
-
-      analysisDiv.innerHTML = lines.map(l => `• ${l}`).join('<br>');
-      resultBox.innerText = '';
-
-      // فرم انتخاب نمونه مطلوب
-      analysisDiv.insertAdjacentHTML('beforeend', `
-        <div class="best-selection">
-          <span>لطفاً نمونه مطلوب خود را انتخاب کنید:</span>
-          ${codes.map(c => `<label><input type="radio" name="userBest" value="${c}">${c}</label>`).join('')}
-          <button id="selectBestBtn" type="button">ثبت انتخاب</button>
-        </div>
-      `);
-      document.getElementById('selectBestBtn').onclick = () => {
-        const sel = document.querySelector('input[name="userBest"]:checked');
-        if (!sel) { alert('لطفاً یک نمونه را انتخاب کنید.'); return; }
-        resultBox.innerText = `نمونه کد ${sel.value}  از نظر ارزیاب مطلوب تر از سایر کدها می باشد.`;
-      };
-
-      // داده‌های نمودار
-      const dataSets = ['color','taste','smell','texture','mouthfeel'].map(prop =>
-        codes.map(c => avg[c][prop].toFixed(2))
-      );
-      const palette = [
-        'rgba(255,99,132,0.7)','rgba(54,162,235,0.7)',
-        'rgba(255,206,86,0.7)','rgba(75,192,192,0.7)',
-        'rgba(153,102,255,0.7)','rgba(255,159,64,0.7)',
-        'rgba(99,255,132,0.7)'
-      ];
-      const colors = {};
-      codes.forEach((c,i) => colors[c] = palette[i % palette.length]);
-
-      const makeCfg = (label,data) => ({
-        type: 'bar',
-        data: { labels: codes, datasets:[{ label,data, backgroundColor: codes.map(k=>colors[k]) }] },
-        options: {
-          indexAxis:'y', responsive:true, maintainAspectRatio:false,
-          scales:{ x:{ min:0, max:5 } },
-          plugins:{ datalabels:{ color:'#000', anchor:'end', align:'right', formatter:v=>v } }
-        }
-      });
-
-      const chartIds = ['colorChart','tasteChart','smellChart','textureChart','mouthfeelChart'];
-      chartIds.forEach((id,i) => {
-        if (!charts[id]) {
-          charts[id] = new Chart(document.getElementById(id), makeCfg(
-            document.querySelector(`#${id} + .chart-label`).innerText,
-            dataSets[i]
-          ));
-        } else {
-          charts[id].data.labels = codes;
-          charts[id].data.datasets[0].data = dataSets[i];
-          charts[id].data.datasets[0].backgroundColor = codes.map(k=>colors[k]);
-          charts[id].update();
-        }
-      });
+      f.productName.value = d.productName;
+      f.education.value   = d.education;
+      f.gender.value      = d.gender;
+      f.color.value       = d.color;
+      f.taste.value       = d.taste;
+      f.smell.value       = d.smell;
+      f.texture.value     = d.texture;
+      f.mouthfeel.value   = d.mouthfeel;
+      editingIndex = i; window.scrollTo(0,0);
     }
 
     function deleteRow(i) {
@@ -625,19 +464,111 @@
     function clearAll() {
       if (!confirm('همه داده‌ها حذف شود؟')) return;
       localStorage.removeItem('evaluations');
-      evaluations=[]; loadTable(); updateAnalysisAndCharts();
+      evaluations = [];
+      loadTable(); updateAnalysisAndCharts();
+    }
+
+    function updateAnalysisAndCharts() {
+      const analysisDiv = document.getElementById('analysis'),
+            resultBox   = document.getElementById('resultBox');
+      if (!evaluations.length) {
+        analysisDiv.innerText = 'داده‌ای موجود نیست.'; resultBox.innerText = '';
+        Object.values(charts).forEach(c=>c.clear&&c.clear());
+        return;
+      }
+
+      const codes = Array.from(new Set(evaluations.map(d=>d.productCode))),
+            groups = {}, avg = {};
+      codes.forEach(c=>groups[c]=[]);
+      evaluations.forEach(d=>groups[d.productCode].push(d));
+
+      codes.forEach(code=>{
+        const arr = groups[code];
+        ['color','taste','smell','texture','mouthfeel'].forEach(prop=>{
+          const vals = arr.map(x=>x[prop]).filter(v=>v>0);
+          const sum  = vals.reduce((s,v)=>s+v,0);
+          avg[code] = avg[code]||{};
+          avg[code][prop] = vals.length? sum/vals.length : 0;
+        });
+      });
+
+      const bestPerProp = {};
+      ['color','taste','smell','texture','mouthfeel'].forEach(prop=>{
+        const maxVal = Math.max(...codes.map(c=>avg[c][prop]));
+        bestPerProp[prop] = codes.filter(c=>avg[c][prop]===maxVal && maxVal>0);
+      });
+
+      const titles={ color:'رنگ', taste:'طعم و مزه', smell:'عطر و بو',
+                     texture:'بافت', mouthfeel:'احساس دهانی' };
+      const lines = Object.keys(titles).map(prop=>{
+        const bests = bestPerProp[prop].length? bestPerProp[prop].join('، '):'–';
+        const nums = bestPerProp[prop].length? bestPerProp[prop]
+          .map(c=>avg[c][prop].toFixed(2)).join('، '):'';
+        return `بخش ${titles[prop]}: ${bests}${nums?` (${nums})`:''}`;
+      });
+      analysisDiv.innerHTML = lines.map(l=>`• ${l}`).join('<br>');
+      resultBox.innerText = '';
+
+      // فرم انتخاب نمونه مطلوب
+      analysisDiv.insertAdjacentHTML('beforeend', `
+        <div class="best-selection">
+          <span>لطفاً نمونه مطلوب خود را انتخاب کنید:</span>
+          ${codes.map(c=>`<label><input type="radio" name="userBest" value="${c}">${c}</label>`).join('')}
+          <button id="selectBestBtn">ثبت انتخاب</button>
+        </div>
+      `);
+      document.getElementById('selectBestBtn').onclick = ()=>{
+        const sel = document.querySelector('input[name="userBest"]:checked');
+        if (!sel) { alert('لطفاً یک نمونه را انتخاب کنید.'); return; }
+        resultBox.innerText = `شما نمونه کد ${sel.value} را انتخاب کردید.`;
+      };
+
+      // آماده‌سازی داده‌های نمودار
+      const dataSets = ['color','taste','smell','texture','mouthfeel']
+        .map(prop=>codes.map(c=>avg[c][prop].toFixed(2)));
+      const palette = [
+        'rgba(255,99,132,0.7)','rgba(54,162,235,0.7)','rgba(255,206,86,0.7)',
+        'rgba(75,192,192,0.7)','rgba(153,102,255,0.7)','rgba(255,159,64,0.7)',
+        'rgba(99,255,132,0.7)'
+      ];
+      const colors = {}; codes.forEach((c,i)=>colors[c]=palette[i%palette.length]);
+
+      const makeCfg = (label,data)=>({
+        type:'bar',
+        data:{ labels:codes, datasets:[{ label, data, backgroundColor:codes.map(k=>colors[k]) }]},
+        options:{
+          indexAxis:'y', responsive:true, maintainAspectRatio:false,
+          scales:{ x:{ min:0, max:5 } },
+          plugins:{ datalabels:{ color:'#000', anchor:'end', align:'right', formatter:v=>v } }
+        }
+      });
+
+      const ids=['colorChart','tasteChart','smellChart','textureChart','mouthfeelChart'];
+      ids.forEach((id,i)=>{
+        if (!charts[id]) {
+          charts[id] = new Chart(document.getElementById(id), makeCfg(
+            document.querySelector(`#${id}+ .chart-label`).innerText,
+            dataSets[i]
+          ));
+        } else {
+          charts[id].data.labels = codes;
+          charts[id].data.datasets[0].data = dataSets[i];
+          charts[id].data.datasets[0].backgroundColor = codes.map(k=>colors[k]);
+          charts[id].update();
+        }
+      });
     }
 
     function exportCSV() {
       if (!evaluations.length) { alert('داده‌ای وجود ندارد.'); return; }
-      const header = ['کد','نام','تحصیلات','جنسیت','رنگ','طعم','عطر','بافت','احساس'];
-      const rows = evaluations.map(d => [
+      const header=['کد','نام','تحصیلات','جنسیت','رنگ','طعم','عطر','بافت','احساس'];
+      const rows=evaluations.map(d=>[
         d.productCode,d.productName,d.education,d.gender,
         d.color>0?d.color:'',d.taste>0?d.taste:'',
         d.smell>0?d.smell:'',d.texture>0?d.texture:'',d.mouthfeel>0?d.mouthfeel:''
       ]);
-      let csv = '\uFEFF'+header.join(',')+'\n'+rows.map(r=>r.join(',')).join('\n');
-      const blob=new Blob([csv],{ type:'text/csv;charset=utf-8;' });
+      let csv='\uFEFF'+header.join(',')+'\n'+rows.map(r=>r.join(',')).join('\n');
+      const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
       const link=document.createElement('a');
       link.href=URL.createObjectURL(blob);
       link.download='evaluations.csv';
@@ -646,17 +577,17 @@
 
     function exportExcel() {
       if (!evaluations.length) { alert('داده‌ای وجود ندارد.'); return; }
-      const header = ['کد محصول','نام محصول','تحصیلات','جنسیت','رنگ','طعم','عطر','بافت','احساس دهانی'];
-      const rows = evaluations.map(d => [
+      const header=['کد محصول','نام محصول','تحصیلات','جنسیت','رنگ','طعم','عطر','بافت','احساس دهانی'];
+      const rows=evaluations.map(d=>[
         d.productCode,d.productName,d.education,d.gender,
         d.color>0?d.color:'',d.taste>0?d.taste:'',
         d.smell>0?d.smell:'',d.texture>0?d.texture:'',d.mouthfeel>0?d.mouthfeel:''
       ]);
-      let html = '<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="UTF-8"></head><body><table><tr>';
+      let html='<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="UTF-8"></head><body><table><tr>';
       header.forEach(h=>html+=`<th>${h}</th>`); html+='</tr>';
       rows.forEach(r=>{ html+='<tr>'; r.forEach(c=>html+=`<td>${c}</td>`); html+='</tr>'; });
       html+='</table></body></html>';
-      const blob=new Blob(['\uFEFF',html],{ type:'application/vnd.ms-excel' });
+      const blob=new Blob(['\uFEFF',html],{type:'application/vnd.ms-excel'});
       const link=document.createElement('a');
       link.href=URL.createObjectURL(blob);
       link.download='evaluations.xls';
@@ -670,9 +601,8 @@
       const prodClean=prodRaw.replace(/\s+/g,'_').replace(/[^آ-یA-Za-z0-9_\-]/g,'');
       const filename=`ارزیابی-${prodClean}-${dateStr}.html`;
 
-      let smallHtml=`<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head><meta charset="UTF-8"><title>ارزیابی ${prodRaw} - ${dateStr}</title>
+      let smallHtml=`<!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="UTF-8">
+<title>ارزیابی ${prodRaw} - ${dateStr}</title>
 <style>body{font-family:Tahoma,sans-serif;padding:1rem;direction:rtl;text-align:right;}
 table{width:100%;border-collapse:collapse;margin-bottom:1rem;}
 th,td{border:1px solid #ccc;padding:.6rem;text-align:center;}
@@ -686,13 +616,13 @@ img{max-width:100%;height:auto;margin-bottom:1rem;display:block;}
 
       ['colorChart','tasteChart','smellChart','textureChart','mouthfeelChart']
       .forEach(id=>{
-        const canvas=document.getElementById(id);
-        const label=canvas.nextElementSibling.innerText;
-        smallHtml+=`<h4>${label}</h4><img src="${canvas.toDataURL('image/png')}" alt="${label}"/>`;
+        const c=document.getElementById(id),
+              label=c.nextElementSibling.innerText;
+        smallHtml+=`<h4>${label}</h4><img src="${c.toDataURL('image/png')}" alt="${label}"/>`;
       });
       smallHtml+='</body></html>';
 
-      const blob=new Blob([smallHtml],{ type:'text/html;charset=utf-8' });
+      const blob=new Blob([smallHtml],{type:'text/html;charset=utf-8'});
       const link=document.createElement('a');
       link.href=URL.createObjectURL(blob);
       link.download=filename;
