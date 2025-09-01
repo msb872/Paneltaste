@@ -520,7 +520,7 @@
       document.getElementById('selectBestBtn').onclick = ()=>{
         const sel = document.querySelector('input[name="userBest"]:checked');
         if (!sel) { alert('لطفاً یک نمونه را انتخاب کنید.'); return; }
-        resultBox.innerText = `شما نمونه کد ${sel.value} را انتخاب کردید.`;
+        resultBox.innerText = ` نمونه کد ${sel.value} از نظر کلی مطلوب تر از سایر نمونه های می باشد.`;
       };
 
       // آماده‌سازی داده‌های نمودار
